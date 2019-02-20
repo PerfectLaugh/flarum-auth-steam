@@ -6,6 +6,7 @@ use Exception;
 use Flarum\Forum\Auth\Registration;
 use Flarum\Forum\Auth\ResponseFactory;
 use Flarum\Settings\SettingsRepositoryInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
@@ -49,7 +50,7 @@ class SteamAuthController implements RequestHandlerInterface
      * @param Request $request
      * @return \Psr\Http\Message\ResponseInterface|RedirectResponse
      */
-    public function handle(Request $request)
+    public function handle(Request $request): ResponseInterface
     {
         $redirectUri = $request->getAttribute('originalUri', $request->getUri())->withQuery('');
 
