@@ -13,7 +13,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 use GuzzleHttp\Client;
 
-class SteamAuthController implements ControllerInterface
+class SteamAuthController implements RequestHandlerInterface
 {
     /**
      * Steam OpenID login url
