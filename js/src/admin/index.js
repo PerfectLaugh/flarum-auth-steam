@@ -1,5 +1,4 @@
 import app from 'flarum/app';
-
 import SteamSettingsModal from './components/SteamSettingsModal';
 
 app.initializers.add('flarum-auth-steam', () => {
