@@ -1,3 +1,4 @@
+import app from 'flarum/app';
 import SettingsModal from 'flarum/components/SettingsModal';
 
 export default class SteamSettingsModal extends SettingsModal {
