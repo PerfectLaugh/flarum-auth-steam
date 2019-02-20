@@ -120,8 +120,8 @@ class SteamAuthController implements RequestHandlerInterface
                         'steam', $steamId,
                         function (Registration $registration) use ($suggestions, $steamId) {
                             $registration
-                                ->provideAvatar($suggestions->avatarUrl)
-                                ->suggestUsername($steamId)
+                                ->provideAvatar($suggestions["avatarUrl"])
+                                ->suggestUsername($suggestions["username"])
                                 ->setPayload(get_object_vars($suggestions));
                         }
                     );
