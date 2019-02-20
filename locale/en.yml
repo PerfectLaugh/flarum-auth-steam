@@ -1,0 +1,10 @@
+flarum-auth-steam:
+  admin:
+    steam_settings:
+      api_key_label: API Key
+      api_secret_label: API Secret
+      title: Steam Settings
+
+  forum:
+    log_in:
+      with_steam_button: Log In with Steam
