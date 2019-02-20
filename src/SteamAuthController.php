@@ -10,7 +10,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 use GuzzleHttp\Client;
 
@@ -29,7 +28,7 @@ class SteamAuthController implements RequestHandlerInterface
     /**
      * @var ResponseFactory
      */
-    protected $authResponse;
+    protected $response;
 
     /**
      * @var SettingsRepositoryInterface
@@ -37,18 +36,19 @@ class SteamAuthController implements RequestHandlerInterface
     protected $settings;
 
     /**
-     * @param ResponseFactory $authResponse
+     * @param ResponseFactory $response
      * @param SettingsRepositoryInterface $settings
      */
-    public function __construct(ResponseFactory $authResponse, SettingsRepositoryInterface $settings)
+    public function __construct(ResponseFactory $response, SettingsRepositoryInterface $settings)
     {
-        $this->authResponse = $authResponse;
+        $this->response = $response;
         $this->settings = $settings;
     }
 
     /**
      * @param Request $request
-     * @return \Psr\Http\Message\ResponseInterface|RedirectResponse
+     * @return ResponseInterface
+     * @throws Exception
      */
     public function handle(Request $request): ResponseInterface
     {
@@ -57,7 +57,7 @@ class SteamAuthController implements RequestHandlerInterface
         $queryParams = $request->getQueryParams();
 
         $oidSig = array_get($queryParams, 'openid_sig');
-        if (! $oidSig) {
+        if (!$oidSig) {
             // redirect user to steam to get one.
             $redirectUri = $request->getAttribute('originalUri', $request->getUri())->withQuery('');
             $query = http_build_query(
@@ -91,7 +91,7 @@ class SteamAuthController implements RequestHandlerInterface
                 'form_params' => $query
             ]);
         } catch (Exception $e) {
-            return new Response("Can't connect to OpenID server.", 500);
+            throw new Exception("Can't connect to OpenID server.");
         }
 
         $steamId = basename(array_get($queryParams, 'openid_claimed_id', ''));
@@ -116,7 +116,7 @@ class SteamAuthController implements RequestHandlerInterface
                         'username' => basename(array_get($info, 'response.players.0.profileurl')),
                         'avatarUrl' => array_get($info, 'response.players.0.avatarfull'),
                     ];
-                    return $this->authResponse->make(
+                    return $this->response->make(
                         'steam', $steamId,
                         function (Registration $registration) use ($suggestions, $steamId) {
                             $registration
@@ -129,6 +129,6 @@ class SteamAuthController implements RequestHandlerInterface
             } catch (Exception $e) { }
         }
 
-        return new Response("Can't Get User Info.", 500);
+        throw new Exception("Can't Get User Info.");
     }
 }
